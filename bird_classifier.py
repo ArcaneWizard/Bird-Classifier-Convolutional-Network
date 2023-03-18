@@ -98,8 +98,7 @@ def parameter_search(train_loader: DataLoader,
   best_loss = float('inf')
   best_lr = 0.0
 
-  #lrs = torch.tensor([10 ** -3, 0.005, 10 ** -2, 10 ** -1])
-  lrs = torch.tensor([0.005, 10 ** -2, 10 ** -1])
+  lrs = torch.tensor([10 ** -3, 0.005, 10 ** -2, 10 ** -1])
 
   for lr in lrs:
     print(f"trying learning rate {lr}")
@@ -256,9 +255,9 @@ d = example_image.flatten().size()[0]
 print(c * w * h == d)
 
 #------------------------------------------------------------------------------------------------------------------------------------
-# M hyperparameter search begins here
+# hyperparameter search begins here
 epoch_count = 6
-out_possibilities = (torch.rand(3) * 10 + 1).int()
+out_possibilities = (torch.rand(5) * 10 + 1).int()
 weight_possibilities = torch.tensor([1e-4, 1e-5])
 
 val_accuracies = torch.zeros([out_possibilities.size(dim = 0), weight_possibilities.size(dim = 0), epoch_count])
@@ -267,11 +266,10 @@ best_lrs = torch.zeros([out_possibilities.size(dim = 0), weight_possibilities.si
 
 test_accuracies = torch.zeros(3)
 
-
-# loop through possible weights for regularization
+# loop through possible output node counts
 for i in range(out_possibilities.size(dim = 0)):
     out = out_possibilities[i].item()
-    # loop through possible numbers of output nodes on the first layer
+    # loop through possible weight decays
     for j in range(weight_possibilities.size(dim = 0)):
       weight_decay = weight_possibilities[j].item()
     
@@ -295,7 +293,7 @@ top_val_accuracies, top_indices = torch.topk(all_val_accuracies.view(-1), 3)
 # use top 3 hyperparameter configuratons to train model on test data
 epochs = range(1, epoch_count * 7 + 1)
 for i in range(3):
-   row = (top_indices[i] // 3)
+   row = (top_indices[i] // 5)
    col = (top_indices[i] % 2)
    
    out = out_possibilities[row].item()
